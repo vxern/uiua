@@ -854,16 +854,12 @@ fn repl(mut env: Uiua, mut compiler: Compiler, color: bool, config: FormatConfig
             return Ok(true);
         }
 
-        match format_str(&code, &config) {
-            Ok(formatted) => {
-                code = formatted.output;
-                _ = line_reader.add_history_entry(&code);
-            }
-            Err(e) => {
-                _ = line_reader.add_history_entry(&code);
-                return Err(e);
-            }
-        }
+        _ = line_reader.add_history_entry(&code);
+
+        code = match format_str(&code, &config) {
+            Ok(formatted) => formatted.output,
+            Err(e) => return Err(e),
+        };
 
         print!("↪ ");
         let backup = compiler.clone();
